@@ -1,0 +1,12 @@
+[package]
+name = "wygg"
+version = "0.1.0"
+authors = ["William Wennerström <william@optmzr.se>"]
+edition = "2018"
+
+[dependencies]
+actix-web = { version = "1.0", features = ["ssl"] }
+actix-files = "0.1.4"
+listenfd = "0.3"
+openssl = { version = "0.10", features = ["v110"] }
+serde = "1.0.99"
