@@ -5,10 +5,12 @@ import Browser.Navigation as Nav
 import Dict
 import Html
 import Page
-import Page.Map as Map
+import Page.Blank as Blank
 import Page.Node as Node
 import Page.NotFound as NotFound
 import Page.Peers as Peers
+import Route exposing (Route, fromUrl)
+import Session exposing (Session, fromKey)
 import Url
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, top)
 
@@ -32,15 +34,16 @@ main =
 -- MODEL
 
 
-type alias Model =
-    { key : Nav.Key
-    , page : Page
-    }
+type Model
+    = Empty Session
+    | NotFound Session
+    | Peers Peers.Model
+    | Node Node.Model
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( Model key url, Cmd.none )
+init _ url key =
+    router (Route.fromUrl url) (Empty (Session.fromKey key))
 
 
 
@@ -56,36 +59,27 @@ subscriptions model =
 -- VIEW
 
 
-type Page
-    = NotFound
-    | Node Node.Model
-    | Peers Peers.Model
-    | Map Map.Model
-
-
-view : Model -> Browser.Document
+view : Model -> Browser.Document Msg
 view model =
-    case model.page of
-        NotFound ->
+    case model of
+        Peers m ->
+            Page.view (Peers.view m)
+
+        Node m ->
+            Page.view (Node.view m)
+
+        Empty _ ->
+            Page.view Blank.view
+
+        NotFound _ ->
             Page.view NotFound.view
-
-        Node ->
-            Page.view Node.view
-
-        Peers ->
-            Page.view Peers.view
-
-        Map ->
-            Page.view Map.view
-
-
-
--- UPDATE
 
 
 type Msg
     = UrlRequest Browser.UrlRequest
     | UrlChanged Url.Url
+    | PeersMsg Peers.Msg
+    | NodeMsg Node.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -95,7 +89,7 @@ update message model =
             case urlRequest of
                 Browser.Internal url ->
                     ( model
-                    , Nav.pushUrl model.key (Url.toString url)
+                    , Nav.pushUrl (Session.navKey (toSession model)) (Url.toString url)
                     )
 
                 Browser.External href ->
@@ -104,36 +98,46 @@ update message model =
                     )
 
         UrlChanged url ->
-            router url model
+            router (Route.fromUrl url) model
+
+        _ ->
+            ( model, Cmd.none )
 
 
+toSession page =
+    case page of
+        Empty session ->
+            session
 
--- ROUTER
+        NotFound session ->
+            session
+
+        Node model ->
+            model.session
+
+        Peers model ->
+            model.session
 
 
-type Route
-    = Node
-    | Peers
-    | Map
+updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toModel toMsg model ( subModel, subCmd ) =
+    ( toModel subModel
+    , Cmd.map toMsg subCmd
+    )
 
 
-router : Url.Url -> Model -> ( Mode, Cmd Msg )
-router =
+router : Maybe Route -> Model -> ( Model, Cmd Msg )
+router route model =
     let
-        route : Parser a b -> Route -> Parser (b -> c) c
-        route parser route =
-            Parser.map route parser
-
-        parser =
-            oneOf
-                [ route top Node
-                , route (s "peers") Peers
-                , route (s "map") Map
-                ]
+        session =
+            toSession model
     in
-    case Parser.parse parser url of
-        Just endpoint ->
-            endpoint
-
+    case route of
         Nothing ->
-            NotFound
+            ( NotFound session, Cmd.none )
+
+        Just Route.Node ->
+            Node.init session |> updateWith Node NodeMsg model
+
+        Just Route.Peers ->
+            Peers.init session |> updateWith Peers PeersMsg model
