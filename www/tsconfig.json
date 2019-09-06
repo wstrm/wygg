@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "target": "es2015",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "pretty": true,
+    "outDir": "./dist",
+    "paths": {
+      "~*": ["./*"]
+    },
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+      ".git",
+      "node_modules",
+      "dist"
+  ]
+}

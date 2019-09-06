@@ -6,11 +6,16 @@
   "author": "William Wennerström <william@optmzr.se>",
   "license": "GPL-3.0",
   "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "tslint --fix './src/**/*.ts'",
     "serve": "parcel serve src/**/*.html",
     "build": "parcel build src/**/*.html"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.3"
+    "parcel-bundler": "^1.12.3",
+    "tslint": "^5.19.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.6.2"
   },
   "dependencies": {
     "src": "^1.1.2"
