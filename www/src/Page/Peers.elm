@@ -67,7 +67,7 @@ view model =
                 [ text
                     (case model.peers of
                         Loading ->
-                            "Loading..."
+                            "Loading peers..."
 
                         Success _ ->
                             "Success!"

@@ -84,8 +84,8 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
-    case message of
-        UrlRequest urlRequest ->
+    case ( message, model ) of
+        ( UrlRequest urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
                     ( model
@@ -97,8 +97,14 @@ update message model =
                     , Nav.load href
                     )
 
-        UrlChanged url ->
+        ( UrlChanged url, _ ) ->
             router (Route.fromUrl url) model
+
+        ( NodeMsg msg, Node m ) ->
+            Node.update msg m |> updateWith Node NodeMsg model
+
+        ( PeersMsg msg, Peers m ) ->
+            Peers.update msg m |> updateWith Peers PeersMsg model
 
         _ ->
             ( model, Cmd.none )

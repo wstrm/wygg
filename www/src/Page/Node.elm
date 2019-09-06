@@ -66,7 +66,7 @@ view model =
                 [ text
                     (case model.node of
                         Loading ->
-                            "Loading..."
+                            "Loading node..."
 
                         Success _ ->
                             "Success!"
