@@ -1,37 +1,34 @@
-import { Html, NodeType } from "./types";
+import { applyAttributes } from "./ops";
+import { Html, NodeCache, NodeType } from "./types";
 
 function createText(node: IText): Text {
   return document.createTextNode(node.value);
 }
 
-function createElement(node: INode, attributes: IAttributes): HTMLElement {
+function createElement(node: INode, cache: NodeCache): HTMLElement {
   const element: HTMLElement = document.createElement(
     node.tagName
   ) as HTMLElement;
 
-  applyAttributes(element, attributes);
+  applyAttributes(element, node.attributes);
 
   for (const child of node.children) {
-    element.appendChild(render(child));
+    element.appendChild(render(child, cache));
   }
 
   return element;
 }
 
-function applyAttributes(element: HTMLElement, attributes: IAttributes): void {
-  for (const key in attributes) {
-    if (attributes.hasOwnProperty(key)) {
-      element.setAttribute(key, attributes[key]);
-    }
-  }
-}
-
-export function render(node: Html): Node {
+export function render(node: Html, cache: NodeCache): Node {
   switch (node.nodeType) {
     case NodeType.NODE:
-      return createElement(node);
+      const element: HTMLElement = createElement(node, cache);
+      cache.set(node, element);
+      return element;
     case NodeType.TEXT:
-      return createText(node);
+      const text: Text = createText(node);
+      cache.set(node, text);
+      return text;
     default:
       throw new Error(`Non-exhaustive match for ${node as never}`);
   }

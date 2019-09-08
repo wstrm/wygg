@@ -1,5 +1,6 @@
-import { div, Html, li, render, text, ul } from "./vdom";
+import { div, Html, li, scene, text, ul } from "./vdom";
 
+/*
 interface ITodo {
   name: string;
   completed: boolean;
@@ -14,8 +15,8 @@ const view: Html = (todos: ITodo[]): INode =>
     )
   );
 
-document.body.appendChild(
-  render(view([
+scene(
+  view([
     { name: "Do stuff", completed: false }
     { name: "Do some other stuff", completed: true }
     { name: "Do stuff", completed: false }
@@ -26,5 +27,12 @@ document.body.appendChild(
     { name: "Do some other stuff", completed: true }
     { name: "Do some other stuff", completed: true }
     { name: "Do some other stuff", completed: true }
-  ]))
+  ]),
+  document.body
 );
+ */
+
+const view = div({}, ["Hello world!"]);
+const scheduler = scene(view, document.body);
+
+scheduler(div({ id: "foo" }, ["Virtual!"]));
