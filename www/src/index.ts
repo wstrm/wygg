@@ -1,37 +1,29 @@
-import { div, Html, li, scene, text, ul } from "./vdom";
+import { html } from "./template.ts";
 
-interface ITodo {
+interface IMenuItem {
   name: string;
-  completed: boolean;
+  url: string;
 }
 
-const todoView: Html = (todos: ITodo[]): INode =>
-  ul(
-    { id: "todo-list" },
-    todos.map(
-      (next: ITodo): INode => li({ class: "todo-item", click: (e: Event) => e.target.hidden = true }, [
-        `${next.name} ${next.completed ? " (done)" : " (incomplete)"}`])
-    )
-  );
+const view = (menus: IMenuItem[]) => {
+  return html`
+    <nav>
+      <a href="/">
+        <img src=""img/mesh-logo.svg"" alt="LTU Mesh logotype" />
+      </a>
+      <ul>
+        ${menus.map(
+          menu =>
+            html`
+              <li>${menu.name} (${menu.url})</li>
+            `
+        )}
+      </ul>
+    </nav>
+  `;
+};
 
-let rootView = todoView([
-    { name: "Do stuff", completed: false }
-    { name: "Do some other stuff", completed: true }
-    { name: "Do stuff", completed: false }
-    { name: "Do stuff", completed: false }
-    { name: "Do stuff", completed: false }
-    { name: "Do stuff", completed: false }
-    { name: "Do some other stuff", completed: true }
-    { name: "Do some other stuff", completed: true }
-    { name: "Do some other stuff", completed: true }
-    { name: "Do some other stuff", completed: true }
+document.body.innerHTML = view([
+  { name: "Hello", url: "/somewhere" },
+  { name: "Good bye", url: "/dunno" }
 ]);
-
-const scheduler = scene(rootView, document.body);
-
-rootView = todoView([
-    { name: "Do stuff", completed: false }
-    { name: "Do some other stuff", completed: true }
-]);
-
-scheduler(rootView));
