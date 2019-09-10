@@ -18,6 +18,8 @@
     "typescript": "^3.6.2"
   },
   "dependencies": {
+    "global": "^4.4.0",
+    "parcel": "^1.12.3",
     "src": "^1.1.2"
   }
 }
