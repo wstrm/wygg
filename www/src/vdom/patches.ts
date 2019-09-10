@@ -1,4 +1,5 @@
-import { applyAttributes, removeElement } from "./ops";
+import { applyAttributes, removeElement, replaceElement } from "./ops";
+import { render } from "./render";
 import { Patch, PatchType } from "./types";
 
 function applyPatch(patch: Patch, cache: NodeCache): void {

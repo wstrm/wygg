@@ -1,22 +1,20 @@
 import { div, Html, li, scene, text, ul } from "./vdom";
 
-/*
 interface ITodo {
   name: string;
   completed: boolean;
 }
 
-const view: Html = (todos: ITodo[]): INode =>
+const todoView: Html = (todos: ITodo[]): INode =>
   ul(
     { id: "todo-list" },
     todos.map(
-      (next: ITodo): INode => li({ className: "todo-item" }, [
+      (next: ITodo): INode => li({ class: "todo-item", click: (e: Event) => e.target.hidden = true }, [
         `${next.name} ${next.completed ? " (done)" : " (incomplete)"}`])
     )
   );
 
-scene(
-  view([
+let rootView = todoView([
     { name: "Do stuff", completed: false }
     { name: "Do some other stuff", completed: true }
     { name: "Do stuff", completed: false }
@@ -27,12 +25,13 @@ scene(
     { name: "Do some other stuff", completed: true }
     { name: "Do some other stuff", completed: true }
     { name: "Do some other stuff", completed: true }
-  ]),
-  document.body
-);
- */
+]);
 
-const view = div({}, ["Hello world!"]);
-const scheduler = scene(view, document.body);
+const scheduler = scene(rootView, document.body);
 
-scheduler(div({ id: "foo" }, ["Virtual!"]));
+rootView = todoView([
+    { name: "Do stuff", completed: false }
+    { name: "Do some other stuff", completed: true }
+]);
+
+scheduler(rootView));

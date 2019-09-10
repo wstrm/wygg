@@ -11,8 +11,10 @@ export const enum PatchType {
   TEXT
 }
 
+export type EventCallback = (event: Event) => void;
+
 export interface IAttributes {
-  [name: string]: string | undefined;
+  [name: string]: string | EventCallback | undefined;
 }
 
 export interface IAppendPatch {
@@ -64,6 +66,8 @@ export interface IText {
 }
 
 export type Html = INode | IText;
+
+export type RelaxedHtml = Html | string;
 
 export class NodeCache extends WeakMap<Html, Node> {
   public replace(oldKey: Html, newKey: Html) {
