@@ -1,4 +1,7 @@
-export const html = (strings: string[], ...expressions: any[]): string => {
+export const html = (
+  strings: TemplateStringsArray,
+  ...expressions: any[]
+): string => {
   let result = "";
 
   expressions.forEach((exp, i) => {

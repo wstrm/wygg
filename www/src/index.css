@@ -219,7 +219,7 @@ footer {
 	left: 0;
 	width: 100%;
 	height: 8rem;
-	z-index: -1;
+	z-index: 1;
 }
 
 /* Each div inside a footer fills the available height. */

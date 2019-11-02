@@ -94,3 +94,6 @@ repl-temp-*
 
 # Project dist folder
 dist/
+
+# Project doc folder
+doc/

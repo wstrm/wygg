@@ -23,6 +23,10 @@
       "~*": ["./*"]
     },
   },
+  "typedocOptions": {
+      "mode": "modules",
+      "out": "doc"
+  },
   "include": ["src/**/*.ts"],
   "exclude": [
       ".git",

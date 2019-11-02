@@ -60,7 +60,7 @@ fn main() {
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen_ssl(l, ssl_acceptor).unwrap()
     } else {
-        server.bind_ssl("127.0.0.1:8088", ssl_acceptor).unwrap()
+        server.bind_ssl("[::]:8088", ssl_acceptor).unwrap()
     };
 
     server.run().unwrap();
