@@ -6,6 +6,7 @@ import { html } from "./lib/template";
 import { NodeComponent } from "./node";
 import { NotFoundComponent } from "./notfound";
 import { PeerComponent } from "./peers";
+import { MapComponent } from "./map";
 import logoURL from "./static/image/mesh-logo.svg";
 
 const headerItem = (name: string, url: string): HeaderItem => {
@@ -52,8 +53,9 @@ router(
   "main",
   {
     "/": new HomeComponent(),
+    "/node": new NodeComponent(homeTrail),
     "/peers": new PeerComponent(homeTrail),
-    "/node": new NodeComponent(homeTrail)
+    "/map": new MapComponent(homeTrail)
   },
 
   new NotFoundComponent()
