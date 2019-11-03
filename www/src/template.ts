@@ -10,11 +10,14 @@ export const html = (
     // Arrays are concatenated.
     if (Array.isArray(exp)) {
       exp = exp.join("");
-    }
-
-    // Functions are simply ignored.
-    if (typeof exp === "function") {
-      exp = "";
+    } else {
+      // Functions and objects are simply ignored.
+      switch (typeof exp) {
+        case "function":
+        case "object":
+          exp = "";
+          break;
+      }
     }
 
     result += str;

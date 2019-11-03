@@ -1,4 +1,5 @@
 import { IComponent } from "./component";
+import { listen, path } from "./router";
 import { html } from "./template";
 
 /** An IMenuItem is a clickable item to be displayed in a menu. */
@@ -16,7 +17,7 @@ export class HeaderComponent implements IComponent {
   }
 
   public init() {
-    // No-op.
+    listen(this.update);
   }
 
   public view() {
@@ -38,7 +39,7 @@ export class HeaderComponent implements IComponent {
           <!--
             Each item in the navigation bar is contained in a unordered list
           -->
-          <ul>
+          <ul id="navigation-items">
             ${menus.map(
               menu =>
                 html`
@@ -49,5 +50,19 @@ export class HeaderComponent implements IComponent {
         </nav>
       </header>
     `;
+  }
+
+  private update() {
+    const items = document.getElementById("navigation-items");
+
+    Array.from(items.children).forEach((link: HTMLLIElement) => {
+      const basename = link.firstChild.hash.slice(1);
+
+      if basename === path() {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
   }
 }
