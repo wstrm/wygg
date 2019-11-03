@@ -1,24 +1,22 @@
-interface IRoutes {
-  [path: string]: string
-};
+import { IComponent } from "./component";
 
-export const router = (routes: IRoutes, notFoundView: string) => {
+interface IRoutes {
+  [path: string]: IComponent
+}
+
+export const router = (mountTag: string, routes: IRoutes, notFoundRoute: IComponent) => {
 
   const update = () => {
-    const el = el || document.getElementsByTagName("main")[0];
+    const el = el || document.getElementsByTagName(mountTag)[0];
     const url = location.hash.slice(1) || "/";
-    const view = routes[url];
+    const component = routes[url] || notFoundRoute;
 
     if (el) {
-      if (view) {
-        el.innerHTML = view;
-      } else {
-        el.innerHTML = notFoundView;
-      }
+      el.innerHTML = component.view();
+      component.init()
     }
   }
 
   window.addEventListener("hashchange", update));
   window.addEventListener("load", update));
 }
-
