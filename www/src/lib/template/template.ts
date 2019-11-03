@@ -26,5 +26,5 @@ export const html = (
   });
 
   result += strings[strings.length - 1];
-  return result;
+  return result.trim();
 };

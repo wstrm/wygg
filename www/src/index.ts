@@ -44,7 +44,7 @@ footerComponent.init();
 const homeTrail: BreadcrumbTrail = [
   {
     name: "Home",
-    url: "#!/"
+    url: "/!#/"
   }
 ];
 

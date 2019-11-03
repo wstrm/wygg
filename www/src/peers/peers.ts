@@ -1,16 +1,21 @@
+import { BreadcrumbsComponent, BreadcrumbTrail } from "../breadcrumbs";
 import { Component } from "../lib/component";
 import { html } from "../lib/template";
 
 export class PeerComponent implements Component {
+  constructor(trail: BreadcrumbTrail) {
+    this.breadcrumbsComponent = new BreadcrumbsComponent(trail, "Peer");
+  }
+
   public init(): void {
-    // No-op.
+    this.breadcrumbsComponent.init();
   }
 
   public view(): string {
+    const breadcrumbsComponent = this.breadcrumbsComponent;
+
     return html`
-      <ol class="breadcrumb">
-        <li>Peers</li>
-      </ol>
+      ${breadcrumbsComponent.view()}
       <section>
         <h1>Peer Overview</h1>
         <p>
