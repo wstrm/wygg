@@ -1,6 +1,6 @@
-import { IComponent } from "./component";
-import { basename, listen, path } from "./router";
-import { html } from "./template";
+import { IComponent } from "./lib/component";
+import { basename, listen, path } from "./lib/router";
+import { html } from "./lib/template";
 
 /** An IMenuItem is a clickable item to be displayed in a menu. */
 export interface IMenuItem {

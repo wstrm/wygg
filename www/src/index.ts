@@ -1,12 +1,12 @@
-import { IComponent } from "./component";
 import { FooterComponent, IContactInfo } from "./footer";
 import { HeaderComponent, IMenuItem } from "./header";
+import { IComponent } from "./lib/component";
+import { router } from "./lib/router";
+import { html } from "./lib/template";
 import { NodeComponent } from "./node";
 import { NotFoundComponent } from "./notfound";
 import { PeerComponent } from "./peers";
-import { router } from "./router";
 import logoURL from "./static/image/mesh-logo.svg";
-import { html } from "./template";
 
 const menuItem = (name: string, url: string): IMenuItem => {
   return { name, url: "!#/" + url };

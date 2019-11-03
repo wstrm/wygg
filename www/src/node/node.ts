@@ -1,14 +1,9 @@
-import { IComponent } from "./component";
-import { html } from "./template";
+import { IComponent } from "../lib/component";
+import { html } from "../lib/template";
 
 export class NodeComponent implements IComponent {
-  constructor(name: string) {
-    this.name = name;
-  }
-
   public init() {
-    const button = document.getElementById("click_me");
-    button.onclick = () => console.log("hello");
+    // No-op.
   }
 
   public view() {
@@ -28,8 +23,6 @@ export class NodeComponent implements IComponent {
         <p>
         Blah blah current connections.
         </p>
-        <button id="click_me">Click me</button>
-        Hello ${this.name}
       </section>
     `;
   }

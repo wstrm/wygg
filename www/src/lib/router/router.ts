@@ -1,4 +1,4 @@
-import { IComponent } from "./component";
+import { IComponent } from "../component";
 
 type UpdateFn = () => void;
 

@@ -1,5 +1,5 @@
-import { IComponent } from "./component";
-import { html } from "./template";
+import { IComponent } from "./lib/component";
+import { html } from "./lib/template";
 
 const upperCase = (str: string): string => {
   return str.toUpperCase();

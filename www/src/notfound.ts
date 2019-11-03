@@ -1,5 +1,5 @@
-import { IComponent } from "./component";
-import { html } from "./template";
+import { IComponent } from "./lib/component";
+import { html } from "./lib/template";
 
 export class NotFoundComponent implements IComponent {
   public init() {
