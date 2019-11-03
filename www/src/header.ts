@@ -1,5 +1,5 @@
 import { IComponent } from "./component";
-import { listen, path } from "./router";
+import { basename, listen, path } from "./router";
 import { html } from "./template";
 
 /** An IMenuItem is a clickable item to be displayed in a menu. */
@@ -56,9 +56,9 @@ export class HeaderComponent implements IComponent {
     const items = document.getElementById("navigation-items");
 
     Array.from(items.children).forEach((link: HTMLLIElement) => {
-      const basename = link.firstChild.hash.slice(1);
+      const base = basename(link.firstChild)
 
-      if basename === path() {
+      if base === path() {
         link.classList.add("active");
       } else {
         link.classList.remove("active");

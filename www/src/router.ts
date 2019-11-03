@@ -6,8 +6,16 @@ interface IRoutes {
   [path: string]: IComponent
 }
 
+export const basename = (loc: Location): string | undefined => {
+  if (loc && loc.hash) {
+    return loc.hash.slice(1)
+  }
+
+  return undefined
+}
+
 export const path = () => {
-    return location.hash.slice(1) || "/";
+    return basename(location) || "/";
 }
 
 export const listen = (update: UpdateFn) {
