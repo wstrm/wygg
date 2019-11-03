@@ -1,16 +1,15 @@
-import { IComponent } from "./lib/component";
+import { Component } from "./lib/component";
 import { html } from "./lib/template";
 
 const upperCase = (str: string): string => {
   return str.toUpperCase();
 };
 
-/** An IContactInfo holds contact fields for the footer.  */
-export interface IContactInfo {
+/** An ContactInfo holds contact fields for the footer.  */
+export interface ContactInfo {
   /** Title of the web page, e.g. "LTU Mesh". */
   title: string;
-  /** Contact email address, e.g. "hello@ltu.mesh". */
-  email: string;
+  /** Contact email address, e.g. "hello@ltu.mesh". */ email: string;
   /** Contact street address, e.g. "Docentvägen 42, LGH 1337". */
   street: string;
   /** Contact city, e.g. "Luleå". */
@@ -21,17 +20,17 @@ export interface IContactInfo {
   country: string;
 }
 
-export class FooterComponent implements IComponent {
-  constructor(info: IContactInfo, year: number) {
+export class FooterComponent implements Component {
+  constructor(info: ContactInfo, year: number) {
     this.info = info;
     this.year = year;
   }
 
-  public init() {
+  public init(): void {
     // No-op.
   }
 
-  public view() {
+  public view(): void {
     const info = this.info;
     const year = this.year;
 

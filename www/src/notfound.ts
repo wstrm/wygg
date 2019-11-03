@@ -1,12 +1,12 @@
-import { IComponent } from "./lib/component";
+import { Component } from "./lib/component";
 import { html } from "./lib/template";
 
-export class NotFoundComponent implements IComponent {
-  public init() {
+export class NotFoundComponent implements Component {
+  public init(): void {
     // No-op.
-  };
+  }
 
-  public view() {
+  public view(): void {
     return html`
       <ol class="breadcrumb">
         <li>404</li>
@@ -14,9 +14,10 @@ export class NotFoundComponent implements IComponent {
       <section>
         <h1>Not Found</h1>
         <p>
-        Sorry, the requested page was not found.
+          Sorry, the requested page was not found.
         </p>
-      <section>
+        <section></section>
+      </section>
     `;
-  };
+  }
 }

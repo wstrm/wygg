@@ -1,6 +1,6 @@
-import { FooterComponent, IContactInfo } from "./footer";
-import { HeaderComponent, IMenuItem } from "./header";
-import { IComponent } from "./lib/component";
+import { FooterComponent, ContactInfo } from "./footer";
+import { HeaderComponent, HeaderItem } from "./header";
+import { HomeComponent } from "./home";
 import { router } from "./lib/router";
 import { html } from "./lib/template";
 import { NodeComponent } from "./node";
@@ -8,13 +8,13 @@ import { NotFoundComponent } from "./notfound";
 import { PeerComponent } from "./peers";
 import logoURL from "./static/image/mesh-logo.svg";
 
-const menuItem = (name: string, url: string): IMenuItem => {
+const headerItem = (name: string, url: string): HeaderItem => {
   return { name, url: "!#/" + url };
 };
 
 const currentYear: number = new Date().getFullYear();
 
-const contactInformation: IContactInfo = {
+const contactInformation: ContactInfo = {
   city: "Luleå",
   country: "Sweden",
   email: "hello@ltu.mesh",
@@ -23,26 +23,38 @@ const contactInformation: IContactInfo = {
   zip: "977 52"
 };
 
-const headerComponent = new HeaderComponent(logoURL, [
-    menuItem("Node", ""),
-    menuItem("Peers", "peers"),
-    menuItem("Map", "map")
-  ]);
+const headerComponent = new HeaderComponent(logoURL, headerItem("Home", ""), [
+  headerItem("Node", "node"),
+  headerItem("Peers", "peers"),
+  headerItem("Map", "map")
+]);
 
 const footerComponent = new FooterComponent(contactInformation, currentYear);
 
 document.body.innerHTML =
   headerComponent.view() +
-  html`<main></main>` +
+  html`
+    <main></main>
+  ` +
   footerComponent.view();
 
 headerComponent.init();
 footerComponent.init();
 
-router("main",
+const homeTrail: BreadcrumbTrail = [
   {
-    "/": new NodeComponent("william"),
-    "/peers": new PeerComponent(),
+    name: "Home",
+    url: "#!/"
+  }
+];
+
+router(
+  "main",
+  {
+    "/": new HomeComponent(),
+    "/peers": new PeerComponent(homeTrail),
+    "/node": new NodeComponent(homeTrail)
   },
+
   new NotFoundComponent()
 );

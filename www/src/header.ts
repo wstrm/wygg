@@ -1,27 +1,29 @@
-import { IComponent } from "./lib/component";
+import { Component } from "./lib/component";
 import { basename, listen, path } from "./lib/router";
 import { html } from "./lib/template";
 
-/** An IMenuItem is a clickable item to be displayed in a menu. */
-export interface IMenuItem {
+/** An HeaderItem is a clickable item to be displayed in a menu. */
+export interface HeaderItem {
   /** A title/name for the item. */
   name: string;
   /** An URL to use when clicking the item. */
   url: string;
 }
 
-export class HeaderComponent implements IComponent {
-  constructor(logoURL: string, menus: IMenuItem[]) {
+export class HeaderComponent implements Component {
+  constructor(logoURL: string, home: HeaderItem, menus: HeaderItem[]) {
     this.logoURL = logoURL;
+    this.home = home;
     this.menus = menus;
   }
 
-  public init() {
+  public init(): void {
     listen(this.update);
   }
 
-  public view() {
+  public view(): string {
     const logoURL = this.logoURL;
+    const home = this.home;
     const menus = this.menus;
 
     return html`
@@ -29,8 +31,8 @@ export class HeaderComponent implements IComponent {
         <!-- nav holds the top navigation bar -->
         <nav>
           <!-- Logotype -->
-          <a href="/">
-            <img src="${ logoURL }" alt="LTU Mesh logotype" />
+          <a href="${home.url}" title="${home.name}">
+            <img src="${logoURL}" alt="LTU Mesh logotype" />
           </a>
 
           <!-- Hamburger menu that is only displayed on mobile devices -->
@@ -52,13 +54,13 @@ export class HeaderComponent implements IComponent {
     `;
   }
 
-  private update() {
+  private update(): void {
     const items = document.getElementById("navigation-items");
 
     Array.from(items.children).forEach((link: HTMLLIElement) => {
-      const base = basename(link.firstChild)
+      const base = basename(link.firstChild);
 
-      if base === path() {
+      if (base === path()) {
         link.classList.add("active");
       } else {
         link.classList.remove("active");

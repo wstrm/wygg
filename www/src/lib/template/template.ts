@@ -1,5 +1,6 @@
 export const html = (
   strings: TemplateStringsArray,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...expressions: any[]
 ): string => {
   let result = "";

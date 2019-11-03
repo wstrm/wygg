@@ -1,28 +1,34 @@
-import { IComponent } from "../lib/component";
+import { BreadcrumbsComponent, BreadcrumbTrail } from "../breadcrumbs";
+import { Component } from "../lib/component";
 import { html } from "../lib/template";
+import { ConnectionsComponent } from "./connections";
+import { OverviewComponent } from "./overview";
 
-export class NodeComponent implements IComponent {
-  public init() {
-    // No-op.
+export class NodeComponent implements Component {
+  constructor(trail: BreadcrumbTrail) {
+    this.breadcrumbsComponent = new BreadcrumbsComponent(trail, "Node");
+    this.overviewComponent = new OverviewComponent();
+    this.connectionsComponent = new ConnectionsComponent();
   }
 
-  public view() {
-    return html`
-      <ol class="breadcrumb">
-        <li>Node</li>
-      </ol>
+  public init(): void {
+    this.breadcrumbsComponent.init();
+    this.overviewComponent.init();
+    this.connectionsComponent.init();
+  }
 
-      <!-- Section containing some general information about LTU Mesh, again,
-        using a section-tag so the website is more semantic -->
+  public view(): string {
+    const breadcrumbsComponent = this.breadcrumbsComponent;
+    const overviewComponent = this.overviewComponent;
+    const connectionsComponent = this.connectionsComponent;
+
+    return html`
+      ${breadcrumbsComponent.view()}
       <section>
         <h1>Node Overview</h1>
-        <p>
-        Blah blah from here you can control your node.
-        </p>
+        ${overviewComponent.view()}
         <h3>Current Connections</h3>
-        <p>
-        Blah blah current connections.
-        </p>
+        ${connectionsComponent.view()}
       </section>
     `;
   }

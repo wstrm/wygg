@@ -1,4 +1,4 @@
-export interface IComponent {
-  init: ();
-  view: (): string;
+export interface Component {
+  init: () => void;
+  view: () => string;
 }
