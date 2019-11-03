@@ -51,11 +51,12 @@ const homeTrail: BreadcrumbTrail = [
 
 router(
   "main",
+  "LTU Mesh",
   {
-    "/": new HomeComponent(),
-    "/node": new NodeComponent(homeTrail),
-    "/peers": new PeerComponent(homeTrail),
-    "/map": new MapComponent(homeTrail)
+    "/": { component: new HomeComponent(), title: "Home" },
+    "/node": { component: new NodeComponent(homeTrail), title: "Node" },
+    "/peers": { component: new PeerComponent(homeTrail), title: "Peers" },
+    "/map": { component: new MapComponent(homeTrail), title: "Map" }
   },
 
   new NotFoundComponent()

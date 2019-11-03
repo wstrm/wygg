@@ -2,8 +2,13 @@ import { Component } from "../component";
 
 type UpdateFn = () => void;
 
+interface Route {
+  title: string;
+  component: Component;
+}
+
 interface Routes {
-  [path: string]: Component;
+  [path: string]: Route;
 }
 
 export const basename = (loc: Location): string | undefined => {
@@ -26,17 +31,22 @@ export const listen = (update: UpdateFn): void => {
 
 export const router = (
   mountTag: string,
+  mainTitle: string,
   routes: Routes,
-  notFoundRoute: Component
+  notFoundRoute: Route
 ): void => {
   const update = (): void => {
     const el = null || document.getElementsByTagName(mountTag)[0];
     const url = path();
-    const component = routes[url] || notFoundRoute;
+    const route = routes[url] || notFoundRoute;
+
+    const component = route.component;
+    const title = route.title + " · " + mainTitle;
 
     if (el) {
       el.innerHTML = component.view();
       component.init();
+      document.title = title;
     }
   };
 
