@@ -10,7 +10,7 @@ import { MapComponent } from "./map";
 import logoURL from "./static/image/mesh-logo.svg";
 
 const headerItem = (name: string, url: string): HeaderItem => {
-  return { name, url: "/!#/" + url };
+  return { name, url: "/#/" + url };
 };
 
 const currentYear: number = new Date().getFullYear();
@@ -45,7 +45,7 @@ footerComponent.init();
 const homeTrail: BreadcrumbTrail = [
   {
     name: "Home",
-    url: "/!#/"
+    url: "/#/"
   }
 ];
 

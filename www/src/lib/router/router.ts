@@ -13,7 +13,7 @@ interface Routes {
 
 export const basename = (loc: Location): string | undefined => {
   if (loc && (loc.hash || loc.pathname)) {
-    // Normalize `/!#/<path>` into `/<path`.
+    // Normalize `/#/<path>` into `/<path`.
     return loc.hash.slice(1) || loc.pathname;
   }
 
