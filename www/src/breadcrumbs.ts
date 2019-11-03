@@ -9,10 +9,7 @@ interface Breadcrumb {
 export type BreadcrumbTrail = Breadcrumb[];
 
 export class BreadcrumbsComponent implements Component {
-  constructor(trail: Breadcrumb[], name: string) {
-    this.trail = trail;
-    this.name = name;
-  }
+  constructor(private trail: Breadcrumb[], private name: string) {}
 
   public init(): void {
     // No-op.

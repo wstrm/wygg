@@ -11,11 +11,11 @@ export interface HeaderItem {
 }
 
 export class HeaderComponent implements Component {
-  constructor(logoURL: string, home: HeaderItem, menus: HeaderItem[]) {
-    this.logoURL = logoURL;
-    this.home = home;
-    this.menus = menus;
-  }
+  constructor(
+    private logoURL: string,
+    private home: HeaderItem,
+    private menus: HeaderItem[]
+  ) {}
 
   public init(): void {
     listen(this.update);

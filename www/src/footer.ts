@@ -21,10 +21,7 @@ export interface ContactInfo {
 }
 
 export class FooterComponent implements Component {
-  constructor(info: ContactInfo, year: number) {
-    this.info = info;
-    this.year = year;
-  }
+  constructor(private info: ContactInfo, private year: number) {}
 
   public init(): void {
     // No-op.
