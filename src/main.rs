@@ -6,14 +6,60 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::borrow::ToOwned;
 use std::collections::HashMap;
-use std::error::Error;
+use std::io;
 use std::io::prelude::*;
 use std::os::unix::net::UnixStream;
 use std::result::Result;
+use std::{error::Error, fmt};
+
+const YGG_SOCK: &str = "/var/run/yggdrasil.sock";
+
+#[derive(Debug)]
+enum YggError {
+    Io(io::Error),
+    Json(serde_json::Error),
+}
+
+impl fmt::Display for YggError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            YggError::Io(ref cause) => write!(f, "I/O error: {}", cause),
+            YggError::Json(ref cause) => write!(f, "JSON error: {}", cause),
+        }
+    }
+}
+
+impl Error for YggError {
+    fn description(&self) -> &str {
+        match *self {
+            YggError::Io(ref cause) => cause.description(),
+            YggError::Json(ref cause) => cause.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&dyn Error> {
+        match *self {
+            YggError::Io(ref cause) => Some(cause),
+            YggError::Json(ref cause) => Some(cause),
+        }
+    }
+}
+
+impl From<io::Error> for YggError {
+    fn from(cause: io::Error) -> YggError {
+        return YggError::Io(cause);
+    }
+}
+
+impl From<serde_json::Error> for YggError {
+    fn from(cause: serde_json::Error) -> YggError {
+        return YggError::Json(cause);
+    }
+}
 
 #[derive(Deserialize)]
 struct PeerForm {
-    uri: String,
+    //uri: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -43,12 +89,40 @@ struct YggResponse<T> {
     status: String,
 }
 
+fn yggdrasil_send<T>(req: YggRequest) -> Result<T, YggError>
+where
+    T: DeserializeOwned,
+{
+    let mut stream = UnixStream::connect(YGG_SOCK)?;
+
+    serde_json::to_writer(&stream, &req).map_err(YggError::from)?;
+
+    let mut data = String::new();
+    stream.read_to_string(&mut data)?;
+
+    let result: YggResponse<T> = serde_json::from_str(&data.to_owned())?;
+
+    return Ok(result.response);
+}
+
+fn yggdrasil_get_peers() -> Result<YggPeers, YggError> {
+    let get_peers = YggRequest {
+        request: "getPeers".to_owned(),
+    };
+
+    return yggdrasil_send(get_peers);
+}
+
 fn dht_get(_req: HttpRequest) -> impl Responder {
     HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
 }
 
 fn peers_get(_req: HttpRequest) -> HttpResponse {
-    HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
+    let response = yggdrasil_get_peers();
+    match response {
+        Ok(r) => HttpResponse::Ok().json(r.peers),
+        Err(e) => HttpResponse::from_error(actix_web::error::ErrorInternalServerError(e)),
+    }
 }
 
 fn sessions_get(_req: HttpRequest) -> HttpResponse {
@@ -63,36 +137,12 @@ fn tun_tap_get(_req: HttpRequest) -> HttpResponse {
     HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
 }
 
-fn peer_add(form: web::Form<PeerForm>) -> HttpResponse {
-    HttpResponse::Ok().body(format!("SHOULD ADD {} HERE!", form.uri))
+fn peer_add(_form: web::Form<PeerForm>) -> HttpResponse {
+    HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
 }
 
 fn peer_remove(_req: HttpRequest) -> HttpResponse {
     HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
-}
-
-fn yggdrasil_send<T>(req: YggRequest) -> Result<T, Box<dyn Error>>
-where
-    T: DeserializeOwned,
-{
-    let mut stream = UnixStream::connect("/var/run/yggdrasil.sock")?;
-
-    serde_json::to_writer(&stream, &req)?;
-
-    let mut data = String::new();
-    stream.read_to_string(&mut data)?;
-
-    let result: YggResponse<T> = serde_json::from_str(&data.to_owned())?;
-
-    return Ok(result.response);
-}
-
-fn yggdrasil_get_peers() -> Result<YggPeers, Box<dyn Error>> {
-    let get_peers = YggRequest {
-        request: "getPeers".to_owned(),
-    };
-
-    return yggdrasil_send(get_peers);
 }
 
 fn main() {
@@ -114,16 +164,6 @@ fn main() {
             .route("/peer", web::delete().to(peer_remove))
             .service(fs::Files::new("/", "./www/dist").index_file("index.html"))
     });
-
-    let response = yggdrasil_get_peers();
-    match response {
-        Ok(response) => {
-            for (key, _) in response.peers.into_iter() {
-                println!("{}", key);
-            }
-        }
-        Err(e) => println!("{}", e),
-    }
 
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen_ssl(l, ssl_acceptor).unwrap()
