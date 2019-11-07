@@ -4,11 +4,12 @@ use listenfd::ListenFd;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use std::borrow::ToOwned;
 use std::collections::HashMap;
+use std::error::Error;
 use std::io::prelude::*;
 use std::os::unix::net::UnixStream;
+use std::result::Result;
 
 #[derive(Deserialize)]
 struct PeerForm {
@@ -70,26 +71,28 @@ fn peer_remove(_req: HttpRequest) -> HttpResponse {
     HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
 }
 
-fn yggdrasil_send<T>(req: YggRequest) -> Result<T>
+fn yggdrasil_send<T>(req: YggRequest) -> Result<T, Box<dyn Error>>
 where
     T: DeserializeOwned,
 {
-    let mut stream = UnixStream::connect("/var/run/yggdrasil.sock").unwrap();
+    let mut stream = UnixStream::connect("/var/run/yggdrasil.sock")?;
 
-    serde_json::to_writer(&stream, &req).unwrap();
+    serde_json::to_writer(&stream, &req)?;
 
     let mut data = String::new();
-    stream.read_to_string(&mut data).unwrap();
+    stream.read_to_string(&mut data)?;
 
-    return serde_json::from_str(&data.to_owned());
+    let result: YggResponse<T> = serde_json::from_str(&data.to_owned())?;
+
+    return Ok(result.response);
 }
 
-fn yggdrasil_get_peers() -> YggResponse<YggPeers> {
+fn yggdrasil_get_peers() -> Result<YggPeers, Box<dyn Error>> {
     let get_peers = YggRequest {
         request: "getPeers".to_owned(),
     };
 
-    return yggdrasil_send(get_peers).unwrap();
+    return yggdrasil_send(get_peers);
 }
 
 fn main() {
@@ -113,7 +116,14 @@ fn main() {
     });
 
     let response = yggdrasil_get_peers();
-    println!("{}", response.status);
+    match response {
+        Ok(response) => {
+            for (key, _) in response.peers.into_iter() {
+                println!("{}", key);
+            }
+        }
+        Err(e) => println!("{}", e),
+    }
 
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen_ssl(l, ssl_acceptor).unwrap()
