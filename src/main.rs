@@ -2,18 +2,17 @@ use actix_files as fs;
 use actix_web::{http, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use listenfd::ListenFd;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+use std::borrow::ToOwned;
+use std::collections::HashMap;
 use std::io::prelude::*;
 use std::os::unix::net::UnixStream;
 
 #[derive(Deserialize)]
 struct PeerForm {
     uri: String,
-}
-
-struct Yggdrasil {
-    stream: UnixStream,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -23,11 +22,24 @@ struct YggRequest {
 
 #[derive(Serialize, Deserialize)]
 struct YggPeers {
+    peers: HashMap<String, YggPeer>,
 }
 
 #[derive(Serialize, Deserialize)]
-struct YggGetPeersResponse {
-    response:
+struct YggPeer {
+    box_pub_key: String,
+    bytes_recvd: u64,
+    bytes_sent: u64,
+    endpoint: String,
+    port: u16,
+    proto: String,
+    uptime: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+struct YggResponse<T> {
+    response: T,
+    status: String,
 }
 
 fn dht_get(_req: HttpRequest) -> impl Responder {
@@ -58,9 +70,9 @@ fn peer_remove(_req: HttpRequest) -> HttpResponse {
     HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
 }
 
-fn yggdrasil_send<'de, T>(req: YggRequest) -> &'de T
+fn yggdrasil_send<T>(req: YggRequest) -> Result<T>
 where
-    T: serde::Deserialize<'de>,
+    T: DeserializeOwned,
 {
     let mut stream = UnixStream::connect("/var/run/yggdrasil.sock").unwrap();
 
@@ -69,17 +81,15 @@ where
     let mut data = String::new();
     stream.read_to_string(&mut data).unwrap();
 
-    let response: T = serde_json::from_str(&data.to_owned()).unwrap();
-
-    return &response;
+    return serde_json::from_str(&data.to_owned());
 }
 
-fn yggdrasil_get_peers() -> String {
+fn yggdrasil_get_peers() -> YggResponse<YggPeers> {
     let get_peers = YggRequest {
         request: "getPeers".to_owned(),
     };
 
-    return yggdrasil_send(get_peers);
+    return yggdrasil_send(get_peers).unwrap();
 }
 
 fn main() {
@@ -103,7 +113,7 @@ fn main() {
     });
 
     let response = yggdrasil_get_peers();
-    println!("{}", response);
+    println!("{}", response.status);
 
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen_ssl(l, ssl_acceptor).unwrap()
