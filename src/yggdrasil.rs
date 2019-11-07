@@ -52,6 +52,7 @@ impl From<serde_json::Error> for Error {
         return Error::Json(cause);
     }
 }
+
 #[derive(Serialize, Deserialize)]
 struct Request {
     request: String,
