@@ -1,18 +1,28 @@
 import { BreadcrumbsComponent, BreadcrumbTrail } from "../breadcrumbs";
-import { Component } from "../lib/component";
+import { DynamicComponent } from "../lib/component";
+import { ConnectionsComponent } from "./connections";
 import { html } from "../lib/template";
 
-export class PeerComponent implements Component {
+export class PeerComponent extends DynamicComponent {
   constructor(trail: BreadcrumbTrail) {
+    super();
+
     this.breadcrumbsComponent = new BreadcrumbsComponent(trail, "Peer");
+    this.connectionsComponent = new ConnectionsComponent();
   }
 
   public init(): void {
     this.breadcrumbsComponent.init();
+    this.connectionsComponent.init();
+
+    this.connectionsComponent.listen(() => {
+      this.render();
+    });
   }
 
   public view(): string {
     const breadcrumbsComponent = this.breadcrumbsComponent;
+    const connectionsComponent = this.connectionsComponent;
 
     return html`
       ${breadcrumbsComponent.view()}
@@ -22,9 +32,7 @@ export class PeerComponent implements Component {
           Blah blah from here you can control your peers.
         </p>
         <h3>Current Connections</h3>
-        <p>
-          Blah blah current connections.
-        </p>
+        ${connectionsComponent.view()}
       </section>
     `;
   }

@@ -1,4 +1,4 @@
-import { Component } from "../component";
+import { Component, DynamicComponent } from "../component";
 
 type UpdateFn = () => void;
 
@@ -47,6 +47,13 @@ export const router = (
       el.innerHTML = component.view();
       component.init();
       document.title = title;
+
+      // Listen for re-render requests from dynamic components.
+      if (component instanceof DynamicComponent) {
+        component.listen(() => {
+          el.innerHTML = component.view();
+        });
+      }
     }
   };
 

@@ -58,6 +58,5 @@ router(
     "/peers": { component: new PeerComponent(homeTrail), title: "Peers" },
     "/map": { component: new MapComponent(homeTrail), title: "Map" }
   },
-
-  new NotFoundComponent()
+  { component: new NotFoundComponent(), title: "Not Found" }
 );
