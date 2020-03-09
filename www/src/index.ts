@@ -1,3 +1,4 @@
+import "regenerator-runtime/runtime";
 import { FooterComponent, ContactInfo } from "./footer";
 import { HeaderComponent, HeaderItem } from "./header";
 import { HomeComponent } from "./home";

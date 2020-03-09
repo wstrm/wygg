@@ -71,7 +71,7 @@ pub struct Peer {
     pub endpoint: String,
     pub port: u16,
     pub proto: String,
-    pub uptime: u64,
+    pub uptime: f64,
 }
 
 #[derive(Serialize, Deserialize)]
