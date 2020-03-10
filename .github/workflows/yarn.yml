@@ -1,0 +1,32 @@
+name: Yarn
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./www
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Dependencies
+        run: yarn
+        working-directory: ${{env.working-directory}}
+      - name: Build
+        run: yarn build
+        working-directory: ${{env.working-directory}}
+        env:
+          CI: true

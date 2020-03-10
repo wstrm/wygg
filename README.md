@@ -1,4 +1,4 @@
-wygg
+wygg ![Rust](https://github.com/wstrm/wygg/workflows/Rust/badge.svg) 
 ====
 Implementing an [Yggdrasil](https://github.com/yggdrasil-network/yggdrasil-go)
 administration web interface and at the same time experimenting with a vanilla
