@@ -59,12 +59,12 @@ struct Request {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Peers {
-    pub peers: HashMap<String, Peer>,
+pub struct PeersContainer {
+    pub peers: HashMap<String, PeerNode>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Peer {
+pub struct PeerNode {
     pub box_pub_key: String,
     pub bytes_recvd: u64,
     pub bytes_sent: u64,
@@ -72,6 +72,21 @@ pub struct Peer {
     pub port: u16,
     pub proto: String,
     pub uptime: f64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct LocalContainer {
+    #[serde(rename = "self")]
+    pub local: HashMap<String, LocalNode>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct LocalNode {
+    pub box_pub_key: String,
+    pub build_name: String,
+    pub build_version: String,
+    pub coords: String,
+    pub subnet: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -96,10 +111,18 @@ where
     return Ok(result.response);
 }
 
-pub fn get_peers() -> Result<Peers, Error> {
+pub fn get_peers() -> Result<PeersContainer, Error> {
     let get_peers = Request {
         request: "getPeers".to_owned(),
     };
 
     return send(get_peers);
+}
+
+pub fn get_local() -> Result<LocalContainer, Error> {
+    let get_local = Request {
+        request: "getSelf".to_owned(),
+    };
+
+    return send(get_local);
 }

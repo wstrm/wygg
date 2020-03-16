@@ -1,10 +1,12 @@
 import { BreadcrumbsComponent, BreadcrumbTrail } from "../breadcrumbs";
-import { Component } from "../lib/component";
+import { DynamicComponent } from "../lib/component";
 import { html } from "../lib/template";
 import { OverviewComponent } from "./overview";
 
-export class NodeComponent implements Component {
+export class NodeComponent extends DynamicComponent {
   constructor(trail: BreadcrumbTrail) {
+    super();
+
     this.breadcrumbsComponent = new BreadcrumbsComponent(trail, "Node");
     this.overviewComponent = new OverviewComponent();
   }
@@ -12,6 +14,10 @@ export class NodeComponent implements Component {
   public init(): void {
     this.breadcrumbsComponent.init();
     this.overviewComponent.init();
+
+    this.overviewComponent.listen(() => {
+      this.render();
+    });
   }
 
   public view(): string {

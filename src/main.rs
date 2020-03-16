@@ -23,6 +23,14 @@ fn peers_get(_req: HttpRequest) -> HttpResponse {
     }
 }
 
+fn local_get(_req: HttpRequest) -> HttpResponse {
+    let response = yggdrasil::get_local();
+    match response {
+        Ok(r) => HttpResponse::Ok().json(r.local),
+        Err(e) => HttpResponse::from_error(actix_web::error::ErrorInternalServerError(e)),
+    }
+}
+
 fn sessions_get(_req: HttpRequest) -> HttpResponse {
     HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
 }
@@ -44,17 +52,20 @@ fn peer_remove(_req: HttpRequest) -> HttpResponse {
 }
 
 fn main() {
+    let listen_address = "[::]:8088";
+
     let mut ssl_acceptor = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
     ssl_acceptor
         .set_private_key_file("key.pem", SslFiletype::PEM)
         .unwrap();
     ssl_acceptor.set_certificate_chain_file("cert.pem").unwrap();
 
-    let mut listenfd = ListenFd::from_env();
+    let mut listen_fd = ListenFd::from_env();
     let mut server = HttpServer::new(|| {
         App::new()
             .route("/dht", web::get().to(dht_get))
             .route("/peers", web::get().to(peers_get))
+            .route("/local", web::get().to(local_get))
             .route("/switch_peers", web::get().to(switch_peers_get))
             .route("/tun_tap", web::get().to(tun_tap_get))
             .route("/sessions", web::get().to(sessions_get))
@@ -63,10 +74,12 @@ fn main() {
             .service(fs::Files::new("/", "./www/dist").index_file("index.html"))
     });
 
-    server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
+    println!("Listening on: https://{}", listen_address);
+
+    server = if let Some(l) = listen_fd.take_tcp_listener(0).unwrap() {
         server.listen_ssl(l, ssl_acceptor).unwrap()
     } else {
-        server.bind_ssl("[::]:8088", ssl_acceptor).unwrap()
+        server.bind_ssl(listen_address, ssl_acceptor).unwrap()
     };
 
     server.run().unwrap();

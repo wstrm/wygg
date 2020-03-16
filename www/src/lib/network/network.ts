@@ -47,7 +47,7 @@ export class Network {
       return result;
     }
 
-    throw new APIError(result, response.status);
+    throw new APIError(response.statusText, response.status);
   }
 
   public static async request<T>(

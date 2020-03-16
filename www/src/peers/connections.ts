@@ -2,6 +2,14 @@ import { DynamicComponent } from "../lib/component";
 import { html } from "../lib/template";
 import { Network } from "../lib/network";
 
+function toMib(bytes: float): string {
+  return (bytes / 1024 / 1024).toFixed(1);
+}
+
+function toInt(f: float): int {
+  return Math.round(f);
+}
+
 export class ConnectionsComponent extends DynamicComponent {
   private peers = [];
 
@@ -26,9 +34,9 @@ export class ConnectionsComponent extends DynamicComponent {
         <thead>
           <tr>
             <th>Address</th>
-            <th>Uptime</th>
+            <th>Uptime (s)</th>
             <th>Endpoint</th>
-            <th>In/Out</th>
+            <th>In/Out (Mib)</th>
             <th></th>
           </tr>
         </thead>
@@ -38,9 +46,9 @@ export class ConnectionsComponent extends DynamicComponent {
               html`
                 <tr>
                   <td>${address}</td>
-                  <td>${info.uptime}</td>
+                  <td>${toInt(info.uptime)}</td>
                   <td>${info.endpoint}</td>
-                  <td>${info.bytes_recvd}/${info.bytes_sent}</td>
+                  <td>${toMib(info.bytes_recvd)}/${toMib(info.bytes_sent)}</td>
                   <td><a href="/#/peer/${info.box_pub_key}">More info</a></td>
                 </tr>
               `
