@@ -2,6 +2,10 @@ import { DynamicComponent } from "../lib/component";
 import { html } from "../lib/template";
 import { Network } from "../lib/network";
 
+function shortPublicKey(key: string): string {
+  return key.slice(0, 15) + ".." + key.slice(-15);
+}
+
 export class OverviewComponent extends DynamicComponent {
   private local = [];
 
@@ -20,22 +24,41 @@ export class OverviewComponent extends DynamicComponent {
 
   public view(): string {
     const local = this.local;
-    console.log(local);
 
     return html`
-      ${local.map(
-        ([address, info]) =>
-        html`
-          <ul>
-            <li><strong>Address:</strong> ${address}</li>
-            <li><strong>Public Key:</strong> ${info.box_pub_key}</li>
-            <li><strong>Build Name:</strong> ${info.build_name}</li>
-            <li><strong>Build Version:</strong> ${info.build_version}</li>
-            <li><strong>Coordinates:</strong> ${info.coords}</li>
-            <li><strong>Subnet:</strong> ${info.subnet}</li>
-          </ul>
-          `
-      )}
+      <table class="overview">
+        <tbody>
+          ${local.map(
+            ([address, info]) =>
+              html`
+                <tr>
+                  <th>Address</th>
+                  <td>${address}</td>
+                </tr>
+                <tr>
+                  <th>Public Key</th>
+                  <td>${shortPublicKey(info.box_pub_key)}</td>
+                </tr>
+                <tr>
+                  <th>Build Name</th>
+                  <td>${info.build_name}</td>
+                </tr>
+                <tr>
+                  <th>Build Version</th>
+                  <td>${info.build_version}</td>
+                </tr>
+                <tr>
+                  <th>Coordinates</th>
+                  <td>${info.coords}</td>
+                </tr>
+                <tr>
+                  <th>Subnet</th>
+                  <td>${info.subnet}</td>
+                </tr>
+              `
+          )}
+        </tbody>
+      </table>
     `;
   }
 }

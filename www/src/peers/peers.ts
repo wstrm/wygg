@@ -27,11 +27,15 @@ export class PeerComponent extends DynamicComponent {
     return html`
       ${breadcrumbsComponent.view()}
       <section>
-        <h1>Peer Overview</h1>
+        <h1>Peers</h1>
         <p>
-          Blah blah from here you can control your peers.
+        Peers are nodes that are connected with this node. The peers are able to
+        route the data from and through this node to others that are part of the
+        same network.
         </p>
-        <h3>Current Connections</h3>
+      <section>
+      </section>
+        <h3>Connections</h3>
         ${connectionsComponent.view()}
       </section>
     `;

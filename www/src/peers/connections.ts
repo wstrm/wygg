@@ -49,7 +49,7 @@ export class ConnectionsComponent extends DynamicComponent {
                   <td>${toInt(info.uptime)}</td>
                   <td>${info.endpoint}</td>
                   <td>${toMib(info.bytes_recvd)}/${toMib(info.bytes_sent)}</td>
-                  <td><a href="/#/peer/${info.box_pub_key}">More info</a></td>
+                  <td><a href="/#/peer/${info.box_pub_key}">More</a></td>
                 </tr>
               `
           )}

@@ -27,7 +27,10 @@ export class NodeComponent extends DynamicComponent {
     return html`
       ${breadcrumbsComponent.view()}
       <section>
-        <h1>Node Overview</h1>
+        <h1>Node</h1>
+      </section>
+      <section>
+        <h3>Overview</h3>
         ${overviewComponent.view()}
       </section>
     `;

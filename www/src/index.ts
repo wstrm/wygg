@@ -54,7 +54,7 @@ router(
   "main",
   "LTU Mesh",
   {
-    "/": { component: new HomeComponent(), title: "Home" },
+    "/": { component: new HomeComponent(contactInformation), title: "Home" },
     "/node": { component: new NodeComponent(homeTrail), title: "Node" },
     "/peers": { component: new PeerComponent(homeTrail), title: "Peers" },
     "/map": { component: new MapComponent(homeTrail), title: "Map" }

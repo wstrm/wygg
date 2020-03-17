@@ -66,6 +66,32 @@ td, th {
 	text-align: left;
 }
 
+/* The table's rows have a border at the bottom for increased readability. */
+tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+/* The last row in a table doesn't have any border. */
+tr:last-child {
+    border-bottom: none;
+}
+
+/* Table rows can be hovered using the mouse for increased readability. */
+tr:hover {
+    background-color: #f0f0e5;
+}
+
+/* The overview class can be used to create a table that mimicks a list with a
+ * table header for each row. */
+table.overview > tbody > tr > th {
+    background-color: initial;
+    color: #3d518c;
+}
+
+/* Enforce that every table header in the overview class ends with a colon. */
+table.overview > tbody > tr > th:after {
+    content: ":";
+}
 
 /* Header text content such as nav, h1, breadcrumbs, legends and labels are
  * always uppercase and uses the Courier New font family. They also use a
