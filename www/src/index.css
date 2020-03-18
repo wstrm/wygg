@@ -127,6 +127,7 @@ header {
 	top: 0;
 	left: 0;
 	background-color: #3d518c;
+    z-index: 3;
 }
 
 /* All list items are floated to the left (excluding the sub-list items). */
@@ -462,4 +463,17 @@ input[type="reset"] {
 	nav > input:checked ~ span:nth-last-child(2) {
 		transform: rotate(-45deg);
 	}
+}
+
+/* The map container fills the whole screen with the exception of allowing the
+ * navigation bar to be visible. The z-indices are set so that the navigation
+ * bar has the index, then the map and lastly the footer. */
+div#map-container {
+    position: absolute;
+    top: 51px;
+    left: 0;
+    height: calc(100vh - 51px);
+    width: 100vw;
+	background-color: #f2f2ef;
+    z-index: 2;
 }

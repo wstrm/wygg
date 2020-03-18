@@ -12,7 +12,11 @@ struct PeerForm {
 }
 
 fn dht_get(_req: HttpRequest) -> impl Responder {
-    HttpResponse::new(http::StatusCode::NOT_IMPLEMENTED)
+    let response = yggdrasil::get_dht();
+    match response {
+        Ok(r) => HttpResponse::Ok().json(r.dht),
+        Err(e) => HttpResponse::from_error(actix_web::error::ErrorInternalServerError(e)),
+    }
 }
 
 fn peers_get(_req: HttpRequest) -> HttpResponse {

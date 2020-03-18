@@ -90,6 +90,18 @@ pub struct LocalNode {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct DHTContainer {
+    pub dht: HashMap<String, DHTNode>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct DHTNode {
+    pub box_pub_key: String,
+    pub coords: String,
+    pub last_seen: f64,
+}
+
+#[derive(Serialize, Deserialize)]
 struct Response<T> {
     response: T,
     status: String,
@@ -125,4 +137,12 @@ pub fn get_local() -> Result<LocalContainer, Error> {
     };
 
     return send(get_local);
+}
+
+pub fn get_dht() -> Result<DHTContainer, Error> {
+    let get_dht = Request {
+        request: "getDHT".to_owned(),
+    };
+
+    return send(get_dht);
 }
