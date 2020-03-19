@@ -20,3 +20,57 @@ cargo watch -x run
 ```
 
 And you're good to go!
+
+## Packaging
+
+#### Raspberry Pi 2
+
+These instructions probably only work on Gentoo.
+
+Prepare an ARMv7 (Musl) toolchain for cross compiling:
+
+```bash
+(root) crossdev --stable -t armv7-unknown-linux-musleabihf
+```
+
+Setup Cargo for the toolchain:
+
+```bash
+mkdir .cargo
+cat >> .cargo/config << EOF
+[target.armv7-unknown-linux-musleabihf]
+linker = "armv7-unknown-linux-musleabihf-gcc"
+EOF
+```
+
+Create a static release binary of the web server:
+
+```bash
+PKG_CONFIG_ALLOW_CROSS=1 \
+CC=armv7-unknown-linux-musleabihf-gcc \
+cargo build --release --target armv7-unknown-linux-musleabihf
+```
+
+Enter the `www/` directory and build the web app:
+
+```bash
+cd www/
+yarn build
+cd -
+```
+
+Package it all into the same directory:
+
+```
+mkdir -p wygg-release/www && cd wygg-release
+cp -r ../www/dist www/.
+cp ../target/armv7-unknown-linux-musleabihf/release/wygg .
+```
+
+Generate a self-signed certificate:
+
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+```
+
+Done!
