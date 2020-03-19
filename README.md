@@ -8,12 +8,14 @@ TypeScript SPA (Single Page Application) and a Rust web server.
 First, make sure Yggdrasil is up and running.
 
 Then, in one terminal:
+
 ```bash
 cd www
 yarn watch
 ```
 
 And in another one:
+
 ```bash
 cargo install cargo-watch  # if you haven't installed it already.
 cargo watch -x run
