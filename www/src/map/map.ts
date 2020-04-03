@@ -97,16 +97,24 @@ class MapCanvas {
     const nodes = this.nodes;
     const links = this.links;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const landscape = window.innerHeight <= window.innerWidth;
+
+    // Use 8:6 aspect ratio for landscape displays and 6:8 for portrait
+    // displays.
+    const width = landscape ? 800 : 600;
+    const height = landscape ? 600 : 800;
 
     const simulation = d3
       .forceSimulation(nodes)
       .force(
         "link",
-        d3.forceLink(links).id((d: any) => d.id)
+        d3
+          .forceLink(links)
+          .id((d: any) => d.id)
+          .distance(70) // Force minimum distance.
+          .strength(1)
       )
-      .force("charge", d3.forceManyBody().strength(-200)) // Minus => repulsion.
+      .force("charge", d3.forceManyBody().strength(-400)) // Minus => repulsion.
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     const svg = d3
@@ -136,16 +144,16 @@ class MapCanvas {
     // Circle
     node
       .append("circle")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
-      .attr("r", 10)
+      .attr("stroke", "#f2f2ef")
+      .attr("stroke-width", 2.5)
+      .attr("r", 15)
       .attr("fill", this.color);
 
     // Label
     node
       .append("text")
       .text((d) => shortAddress(d.address))
-      .attr("x", 15)
+      .attr("x", 20)
       .attr("y", 4);
 
     simulation.on("tick", () => {
