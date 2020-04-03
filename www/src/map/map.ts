@@ -98,7 +98,7 @@ class MapCanvas {
     const links = this.links;
 
     const width = window.innerWidth;
-    const height = window.innerWidth;
+    const height = window.innerHeight;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -114,7 +114,7 @@ class MapCanvas {
       .attr("width", "100%")
       .attr("height", "100%")
       .attr("viewBox", "0 0 " + width + " " + height)
-      .attr("preserveAspectRatio", "xMinYMin");
+      .attr("preserveAspectRatio", "xMinYMin meet");
 
     const link = svg
       .append("g")
