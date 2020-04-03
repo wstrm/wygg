@@ -97,12 +97,8 @@ class MapCanvas {
     const nodes = this.nodes;
     const links = this.links;
 
-    const landscape = window.innerHeight <= window.innerWidth;
-
-    // Use 8:6 aspect ratio for landscape displays and 6:8 for portrait
-    // displays.
-    const width = landscape ? 800 : 600;
-    const height = landscape ? 600 : 800;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -124,7 +120,18 @@ class MapCanvas {
       .attr("viewBox", "0 0 " + width + " " + height)
       .attr("preserveAspectRatio", "xMinYMin meet");
 
-    const link = svg
+    const container = svg.append("g");
+
+    svg.call(
+      d3
+        .zoom()
+        .scaleExtent([0.1, 4])
+        .on("zoom", () => {
+          container.attr("transform", d3.event.transform);
+        })
+    );
+
+    const link = container
       .append("g")
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
@@ -133,7 +140,7 @@ class MapCanvas {
       .join("line")
       .attr("stroke-width", 5.0);
 
-    const node = svg
+    const node = container
       .append("g")
       .selectAll("g")
       .data(nodes)
