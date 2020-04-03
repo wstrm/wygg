@@ -56,7 +56,7 @@ class MapCanvas {
     });
   }
 
-  private color(d: GraphNode){
+  private color(d: GraphNode) {
     switch (d.state) {
       case PeerState.Local:
         return "#3d518c";
@@ -90,10 +90,7 @@ class MapCanvas {
       d.fy = null;
     };
 
-    return d3.drag()
-      .on("start", start)
-      .on("drag", drag)
-      .on("end", end);
+    return d3.drag().on("start", start).on("drag", drag).on("end", end);
   }
 
   public render(id: string): void {
@@ -103,37 +100,43 @@ class MapCanvas {
     const width = window.innerWidth;
     const height = window.innerWidth;
 
-    const simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id((d: any) => d.id))
+    const simulation = d3
+      .forceSimulation(nodes)
+      .force(
+        "link",
+        d3.forceLink(links).id((d: any) => d.id)
+      )
       .force("charge", d3.forceManyBody().strength(-200)) // Minus => repulsion.
       .force("center", d3.forceCenter(width / 2, height / 2));
 
-    const svg = d3.select(id)
-      .attr("width", '100%')
-      .attr("height", '100%')
-      .attr('viewBox', '0 0 ' + width + ' ' + height)
-      .attr('preserveAspectRatio','xMinYMin');
+    const svg = d3
+      .select(id)
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("viewBox", "0 0 " + width + " " + height)
+      .attr("preserveAspectRatio", "xMinYMin");
 
-    const link = svg.append("g")
-        .attr("stroke", "#999")
-        .attr("stroke-opacity", 0.6)
+    const link = svg
+      .append("g")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
       .selectAll("line")
       .data(links)
       .join("line")
-        .attr("stroke-width", 5.0);
+      .attr("stroke-width", 5.0);
 
-    const node = svg.append("g")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
+    const node = svg
+      .append("g")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5)
       .selectAll("circle")
       .data(nodes)
       .join("circle")
-        .attr("r", 10)
-        .attr("fill", this.color)
-        .call(this.drag(simulation));
+      .attr("r", 10)
+      .attr("fill", this.color)
+      .call(this.drag(simulation));
 
-    node.append("title")
-      .text(d => d.id);
+    node.append("title").text((d) => d.id);
 
     simulation.on("tick", () => {
       link
@@ -142,9 +145,7 @@ class MapCanvas {
         .attr("x2", (d: any) => d.target.x)
         .attr("y2", (d: any) => d.target.y);
 
-      node
-        .attr("cx", (d: any) => d.x)
-        .attr("cy", (d: any) => d.y);
+      node.attr("cx", (d: any) => d.x).attr("cy", (d: any) => d.y);
     });
   }
 }
@@ -158,7 +159,7 @@ class Peer {
   constructor(
     public address: string | null,
     info: any,
-    public state: PeerState,
+    public state: PeerState
   ) {
     this.coords = info["coords"]
       .replace(/[^0-9 ]/g, "")
@@ -176,7 +177,7 @@ class DHT {
 
   constructor(peers: Peer[]) {
     const known = new Set();
-    const parents: number[][] = []
+    const parents: number[][] = [];
 
     this.peers = [];
 
@@ -192,11 +193,13 @@ class DHT {
 
     parents.forEach((coords) => {
       while (coords.length > 0) {
-        const parentCoords = stringifyCoords(coords)
+        const parentCoords = stringifyCoords(coords);
 
         if (!known.has(parentCoords)) {
           known.add(parentCoords);
-          this.peers.push(new Peer(null, { coords: parentCoords, }, PeerState.Unknown));
+          this.peers.push(
+            new Peer(null, { coords: parentCoords }, PeerState.Unknown)
+          );
         }
 
         coords.pop();
@@ -211,7 +214,6 @@ export class MapComponent implements Component {
       Network.request("GET", ["dht"]),
       Network.request("GET", ["local"]),
     ]).then(([_dht, _local]) => {
-
       _local = Object.entries(_local)[0];
       _dht = Object.entries(_dht);
 
@@ -229,7 +231,7 @@ export class MapComponent implements Component {
     return html`
       <section>
         <div id="map-container">
-        <svg id="map"></svg>
+          <svg id="map"></svg>
         </div>
       </section>
     `;
