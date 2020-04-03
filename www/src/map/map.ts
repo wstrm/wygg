@@ -127,16 +127,26 @@ class MapCanvas {
 
     const node = svg
       .append("g")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
-      .selectAll("circle")
+      .selectAll("g")
       .data(nodes)
-      .join("circle")
-      .attr("r", 10)
-      .attr("fill", this.color)
+      .enter()
+      .append("g")
       .call(this.drag(simulation));
 
-    node.append("title").text((d) => d.id);
+    // Circle
+    node
+      .append("circle")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5)
+      .attr("r", 10)
+      .attr("fill", this.color);
+
+    // Label
+    node
+      .append("text")
+      .text((d) => shortAddress(d.address))
+      .attr("x", 15)
+      .attr("y", 4);
 
     simulation.on("tick", () => {
       link
@@ -145,7 +155,7 @@ class MapCanvas {
         .attr("x2", (d: any) => d.target.x)
         .attr("y2", (d: any) => d.target.y);
 
-      node.attr("cx", (d: any) => d.x).attr("cy", (d: any) => d.y);
+      node.attr("transform", (d) => "translate(" + d.x + "," + d.y + ")");
     });
   }
 }
